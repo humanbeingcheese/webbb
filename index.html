@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRITICAL SYSTEM WARNING</title>
+    <style>
+        body {
+            background-color: #050505;
+            color: #00ff33;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 30px;
+            margin: 0;
+        }
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+            border: 2px dashed #ff0000;
+            padding: 25px;
+            background-color: #0c0c0c;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+        }
+        .header {
+            color: #ff0000;
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+        }
+        .data-row {
+            margin: 12px 0;
+            font-size: 15px;
+            border-bottom: 1px solid #113311;
+            padding-bottom: 6px;
+        }
+        .label {
+            color: #888;
+            font-weight: bold;
+        }
+        .value {
+            color: #00ff33;
+            float: right;
+        }
+        .alert-text {
+            color: #ffff00;
+            text-align: center;
+            margin-top: 25px;
+            font-weight: bold;
+            animation: blink 1.5s infinite;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">🚨 WARNING: FEDERAL INTERCEPTION ACTIVE 🚨</div>
+    
+    <div class="data-row"><span class="label">TARGET PUBLIC IP:</span> <span class="value" id="ip">Fetching secure route...</span></div>
+    <div class="data-row"><span class="label">APPROX. LOCATION:</span> <span class="value" id="location">Triangulating...</span></div>
+    <div class="data-row"><span class="label">ISP PROVIDER:</span> <span class="value" id="isp">Querying node...</span></div>
+    <div class="data-row"><span class="label">DEVICE TYPE:</span> <span class="value" id="device">Analyzing platform...</span></div>
+    <div class="data-row"><span class="label">OPERATING SYSTEM:</span> <span class="value" id="os">Reading kernel...</span></div>
+    <div class="data-row"><span class="label">CPU CORES (THREADS):</span> <span class="value" id="cpu">Scanning hardware...</span></div>
+    <div class="data-row"><span class="label">DEVICE MEMORY (RAM):</span> <span class="value" id="ram">Calculating cache...</span></div>
+    <div class="data-row"><span class="label">SCREEN RESOLUTION:</span> <span class="value" id="screen">Checking display...</span></div>
+    <div class="data-row"><span class="label">BROWSER ENGINE:</span> <span class="value" id="browser">Detecting agent...</span></div>
+    
+    <div class="alert-text">[ ALL DEVICE METRICS LOGGED AND ARCHIVED ]</div>
+</div>
+
+<script>
+    // 1. Gather Physical Device Specs from the Browser API
+    document.getElementById('screen').innerText = `${window.screen.width} x ${window.screen.height} (${window.screen.colorDepth}-bit)`;
+    document.getElementById('cpu').innerText = `${navigator.hardwareConcurrency || 'Unknown'} Threads`;
+    document.getElementById('ram').innerText = navigator.deviceMemory ? `~${navigator.deviceMemory} GB` : "Protected / Unknown";
+
+    // 2. Parse User-Agent for OS & Browser Type
+    const ua = navigator.userAgent;
+    let os = "Unknown OS";
+    let device = "Desktop / Laptop";
+    
+    if (ua.indexOf("Win") !== -1) os = "Windows";
+    if (ua.indexOf("Mac") !== -1) os = "macOS";
+    if (ua.indexOf("Linux") !== -1) os = "Linux";
+    if (ua.indexOf("Android") !== -1) { os = "Android"; device = "Mobile Device"; }
+    if (ua.indexOf("like Mac") !== -1) { os = "iOS (iPhone/iPad)"; device = "Mobile Device"; }
+    
+    let browser = "Standard Web Browser";
+    if (ua.indexOf("Chrome") !== -1) browser = "Google Chrome / Chromium";
+    if (ua.indexOf("Firefox") !== -1) browser = "Mozilla Firefox";
+    if (ua.indexOf("Safari") !== -1 && ua.indexOf("Chrome") === -1) browser = "Apple Safari";
+    if (ua.indexOf("Edge") !== -1) browser = "Microsoft Edge";
+
+    document.getElementById('os').innerText = os;
+    document.getElementById('device').innerText = device;
+    document.getElementById('browser').innerText = browser;
+
+    // 3. Fetch Public IP Details securely via public fallback pipeline
+    fetch('https://ipapi.co')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('ip').innerText = data.ip || "Hidden Node";
+            document.getElementById('location').innerText = data.city ? `${data.city}, ${data.region}` : "Unavailable";
+            document.getElementById('isp').innerText = data.org || "Encrypted ISP";
+        })
+        .catch(() => {
+            // Secondary fallback if primary API endpoint is blocked by extensions
+            fetch('https://ipify.org')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('ip').innerText = data.ip;
+                    document.getElementById('location').innerText = "Bypassing Proxy Security...";
+                    document.getElementById('isp').innerText = "Direct Gateway Connection";
+                })
+                .catch(() => {
+                    document.getElementById('ip').innerText = "127.0.0.1 (Local Host Mode)";
+                    document.getElementById('location').innerText = "Local Override Configured";
+                    document.getElementById('isp').innerText = "Internal Server Core";
+                });
+        });
+</script>
+
+</body>
+</html>
